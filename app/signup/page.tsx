@@ -1,24 +1,29 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // ✅ import router
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter(); // ✅ use the router
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login with:', { email, password });
+    console.log('Sign up with:', { email, password });
 
-    // Just simulate login for now
+    // ✅ Simulate signup and redirect
+    const fakeUserId = '1234';
+    router.push(`/dashboard/${fakeUserId}`);
+
     setEmail('');
     setPassword('');
   };
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6">Login to DawgDonate</h1>
-      <form onSubmit={handleLogin} className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+      <h1 className="text-3xl font-bold mb-6">Sign up for DawgDonate</h1>
+      <form onSubmit={handleSignup} className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
         <input
           type="email"
           placeholder="Email"
@@ -39,12 +44,12 @@ export default function LoginPage() {
           type="submit"
           className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
         >
-          Login
+          Sign Up
         </button>
         <p className="text-sm mt-4 text-center">
-          Don’t have an account?{' '}
-          <Link href="/signup" className="text-blue-600 hover:underline">
-            Sign up
+          Already have an account?{' '}
+          <Link href="/login" className="text-blue-600 hover:underline">
+            Login
           </Link>
         </p>
       </form>
