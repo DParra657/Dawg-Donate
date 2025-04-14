@@ -1,16 +1,21 @@
 'use client';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const router = useRouter();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Login with:', { email, password });
 
-    // Just simulate login for now
+    // Simulate user login
+    const userId = '1234'; // you can change this or get it from a real login later
+    router.push(`/dashboard/${userId}`);
+
     setEmail('');
     setPassword('');
   };
