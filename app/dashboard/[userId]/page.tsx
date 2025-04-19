@@ -18,7 +18,7 @@ export default function DashboardPage() {
         {/* Welcome Banner */}
         <section className="text-center mb-12">
           <div className="flex items-center justify-center gap-2">
-            <Image src="/images/logo.png" width={40} height={40} alt="Logo" />
+            
             <h1 className="text-3xl font-bold">Welcome to your donations</h1>
           </div>
         </section>
