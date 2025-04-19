@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Header from '../components/Header';
 
 export default function Splash() {
   return (
@@ -31,19 +32,19 @@ export default function Splash() {
         {/* Info Icons Section */}
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-sm text-white">
           <div>
-            <Image src="/images/list.svg" alt="List Items" width={48} height={48} className="mx-auto" />
+            <Image src="/images/list.png" alt="List Items" width={48} height={48} className="mx-auto" />
             <p className="mt-2">List Items</p>
           </div>
           <div>
-            <Image src="/images/ship.svg" alt="Easy Shipping" width={48} height={48} className="mx-auto" />
+            <Image src="/images/ga.png" alt="Easy Shipping" width={48} height={48} className="mx-auto" />
             <p className="mt-2">Easy Shipping</p>
           </div>
           <div>
-            <Image src="/images/track.svg" alt="Track Donations" width={48} height={48} className="mx-auto" />
+            <Image src="/images/track.png" alt="Track Donations" width={48} height={48} className="mx-auto" />
             <p className="mt-2">Track Donations</p>
           </div>
           <div>
-            <Image src="/images/cart.svg" alt="Add to Cart" width={48} height={48} className="mx-auto" />
+            <Image src="/images/add.png" alt="Add to Cart" width={48} height={48} className="mx-auto" />
             <p className="mt-2">Add to Cart</p>
           </div>
         </div>

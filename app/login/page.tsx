@@ -8,17 +8,29 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login with:', { email, password });
-
-    // Simulate user login
-    const userId = '1234'; // you can change this or get it from a real login later
-    router.push(`/dashboard/${userId}`);
-
+  
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+  
+    const data = await res.json();
+  
+    if (res.ok) {
+      router.push(`/dashboard/${data.userId}`);
+    } else {
+      alert(data.error || 'Login failed');
+    }
+  
     setEmail('');
     setPassword('');
   };
+  
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">

@@ -8,17 +8,29 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const router = useRouter(); // ✅ use the router
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sign up with:', { email, password });
-
-    // ✅ Simulate signup and redirect
-    const fakeUserId = '1234';
-    router.push(`/dashboard/${fakeUserId}`);
-
+  
+    const res = await fetch('/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+  
+    const data = await res.json();
+  
+    if (res.ok) {
+      router.push(`/dashboard/${data.userId}`);
+    } else {
+      alert(data.error || 'Signup failed');
+    }
+  
     setEmail('');
     setPassword('');
   };
+  
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
