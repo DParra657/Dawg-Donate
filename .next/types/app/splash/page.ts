@@ -1,4 +1,4 @@
-// File: C:\Users\keert\Web prgramming final project\Dawg-Donate\app\splash\page.tsx
+// File: C:\Users\priya\OneDrive\Desktop\webProg\DawgDonate\app\splash\page.tsx
 import * as entry from '../../../../app/splash/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
