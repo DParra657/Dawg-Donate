@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-// File: C:\Users\dparr\Documents\Real Group Project\app\login\page.tsx
-=======
-// File: C:\Users\priya\OneDrive\Desktop\webProg\DawgDonate\app\login\page.tsx
->>>>>>> 753223999afa9d238f27eeff6ae88b4ef96f35c1
+// File: C:\Users\priya\OneDrive\Desktop\webProg\Dawg-Donate\app\login\page.tsx
 import * as entry from '../../../../app/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

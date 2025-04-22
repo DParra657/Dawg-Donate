@@ -10,7 +10,7 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-
+ 
     const res = await fetch('/api/users', {
       method: 'POST',
       headers: {
