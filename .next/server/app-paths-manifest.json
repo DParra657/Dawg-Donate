@@ -1,16 +1,9 @@
 {
-<<<<<<< HEAD
-  "/api/users/route": "app/api/users/route.js",
   "/api/login/route": "app/api/login/route.js",
-  "/splash/page": "app/splash/page.js",
-  "/login/page": "app/login/page.js",
-  "/dashboard/[userId]/page": "app/dashboard/[userId]/page.js",
-  "/signup/page": "app/signup/page.js",
-  "/page": "app/page.js"
-=======
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/users/route": "app/api/users/route.js",
   "/splash/page": "app/splash/page.js",
   "/login/page": "app/login/page.js",
   "/dashboard/[userId]/page": "app/dashboard/[userId]/page.js",
   "/signup/page": "app/signup/page.js"
->>>>>>> dcde09c9ff28518a4517e6ff5eb38f619c21a658
 }
