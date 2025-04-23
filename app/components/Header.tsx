@@ -1,25 +1,14 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-type HeaderProps = {
-  isLoggedIn: boolean;
-};
-
-export default function Header({ isLoggedIn }: HeaderProps) {
-  const router = useRouter();
+export default function Header() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const logout = () => {
-    console.log('User logged out');
-    router.push('/');
-  };
-
-  const scrollToForm = () => {
-    const form = document.getElementById('add-item-form');
-    if (form) {
-      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    setIsLoggedIn(false);
+    console.log("User logged out");
   };
 
   return (
@@ -32,7 +21,7 @@ export default function Header({ isLoggedIn }: HeaderProps) {
       <nav className="flex items-center space-x-4">
         {isLoggedIn ? (
           <>
-            <button onClick={scrollToForm} className="text-blue-600">Add Item</button>
+            <Link href="/add" className="text-blue-600">Add Item</Link>
             <button onClick={logout} className="text-red-500">Logout</button>
           </>
         ) : (
