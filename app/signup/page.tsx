@@ -1,66 +1,101 @@
-'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // ✅ import router
-import Link from 'next/link';
+'use client'; // Enables client-side rendering in Next.js
+
+import { useState } from 'react'; // Hook for managing component state
+import { useRouter } from 'next/navigation'; // For programmatic navigation after signup
+import Link from 'next/link'; // Next.js component for internal navigation
 
 export default function SignupPage() {
+  // Local state for input fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter(); // ✅ use the router
+  const [name, setName] = useState('');  // Add state for name
+  const router = useRouter(); // Router for navigating to dashboard after signup
 
+  // Function to handle form submission
   const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-  
+    e.preventDefault(); // Prevents default form behavior (refresh)
+
+    // Send POST request to the API with email and password
     const res = await fetch('/api/users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, name }), 
     });
-  
-    const data = await res.json();
-  
+
+    const data = await res.json(); // Parse the response JSON
+
     if (res.ok) {
-      router.push(`/dashboard/${data.userId}`);
+      // Save data to localStorage after successful signup
+      localStorage.setItem('username', email);
+      localStorage.setItem('name', name);  
+      // Redirect to dashboard after signup
+      router.push(`/dashboard/${data.userId}`); 
     } else {
-      alert(data.error || 'Signup failed');
+      alert(data.error || 'Signup failed'); // Show error alert if signup fails
     }
-  
+
+    // Clear input fields
     setEmail('');
     setPassword('');
+    setName(''); 
   };
-  
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6">Sign up for DawgDonate</h1>
-      <form onSubmit={handleSignup} className="w-full max-w-sm bg-white p-6 rounded-lg shadow-md">
+    <main
+      className="flex flex-col items-center justify-center min-h-screen p-6"
+      style={{ backgroundColor: '#DB6B71', color: 'black' }}
+    >
+      {/* Page title */}
+      <h1 className="text-3xl font-extrabold mb-6 text-white drop-shadow">
+        Sign up for DawgDonate
+      </h1>
+
+      {/* Signup form */}
+      <form onSubmit={handleSignup} className="w-full max-w-sm bg-white p-8 rounded-xl shadow-lg">
+        {/* Name input */}
+        <input
+          type="text"
+          placeholder="Name"
+          className="w-full mb-4 p-3 border border-gray-300 rounded text-black placeholder:text-gray-500"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+
+        {/* Email input */}
         <input
           type="email"
           placeholder="Email"
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border border-gray-300 rounded text-black placeholder:text-gray-500"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
+
+        {/* Password input */}
         <input
-          type="password"
+          type="password"  // This ensures the password is hidden while typing
           placeholder="Password"
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 border border-gray-300 rounded text-black placeholder:text-gray-500"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+
+        {/* Submit button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="w-full bg-black text-white font-semibold py-2 rounded hover:bg-opacity-80 transition"
         >
           Sign Up
         </button>
-        <p className="text-sm mt-4 text-center">
+
+        {/* Link to login page */}
+        <p className="text-sm mt-4 text-center text-black">
           Already have an account?{' '}
-          <Link href="/login" className="text-blue-600 hover:underline">
+          <Link href="/login" className="text-black font-bold underline">
             Login
           </Link>
         </p>

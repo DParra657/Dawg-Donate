@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // File: C:\Users\dparr\Documents\Real Group Project\app\splash\page.tsx
+=======
+// File: C:\Users\priya\OneDrive\Desktop\webProg\Dawg-Donate\app\splash\page.tsx
+>>>>>>> dcde09c9ff28518a4517e6ff5eb38f619c21a658
 import * as entry from '../../../../app/splash/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

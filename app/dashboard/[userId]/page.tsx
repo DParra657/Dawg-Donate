@@ -1,14 +1,31 @@
 'use client';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Header from '../../components/Header';
 import AddItem from '../../components/add';
-import Item from '../../components/Item';
 import { items } from '../../data/dummyData';
 
 export default function DashboardPage() {
+  const [name, setName] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);  // Track if user is authenticated
   const params = useParams();
   const userId = params?.userId;
+
+  // Check for user authentication and retrieve name from localStorage
+  useEffect(() => {
+    const storedToken = localStorage.getItem('authToken');
+    const storedName = localStorage.getItem('name');
+
+    if (storedToken && storedName) {
+      setIsAuthenticated(true);  // If token and name exist, mark as authenticated
+      setName(storedName);       // Set the name from localStorage
+    }
+  }, []);
+
+  if (!isAuthenticated) {
+    return <p>Please log in to view your dashboard.</p>;  // Show message if not authenticated
+  }
 
   return (
     <>
@@ -18,8 +35,7 @@ export default function DashboardPage() {
         {/* Welcome Banner */}
         <section className="text-center mb-12">
           <div className="flex items-center justify-center gap-2">
-            
-            <h1 className="text-3xl font-bold">Welcome to your donations</h1>
+            <h1 className="text-3xl font-bold">Welcome to your donations, {name}!</h1> {/* Personalized greeting */}
           </div>
         </section>
 
