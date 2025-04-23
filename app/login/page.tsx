@@ -25,6 +25,9 @@ export default function LoginPage() {
 
     // If login is successful, redirect to user's dashboard
     if (res.ok) {
+      localStorage.setItem('authToken', data.token);  // make sure your API returns this
+      localStorage.setItem('name', data.name);
+
       router.push(`/dashboard/${data.userId}`);
     } else {
       alert(data.error || 'Login failed'); // Show error if login fails
