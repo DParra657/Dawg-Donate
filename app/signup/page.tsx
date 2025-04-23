@@ -6,6 +6,7 @@ import Link from 'next/link';
 export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');  // Add state for name
   const router = useRouter();
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -16,19 +17,22 @@ export default function SignupPage() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, name }), 
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      router.push(`/dashboard/${data.userId}`);
+      localStorage.setItem('username', email);
+      localStorage.setItem('name', name);  
+      router.push(`/dashboard/${data.userId}`); 
     } else {
       alert(data.error || 'Signup failed');
     }
 
     setEmail('');
     setPassword('');
+    setName(''); 
   };
 
   return (
@@ -40,6 +44,14 @@ export default function SignupPage() {
         Sign up for DawgDonate
       </h1>
       <form onSubmit={handleSignup} className="w-full max-w-sm bg-white p-8 rounded-xl shadow-lg">
+        <input
+          type="text"
+          placeholder="Name"
+          className="w-full mb-4 p-3 border border-gray-300 rounded text-black placeholder:text-gray-500"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
         <input
           type="email"
           placeholder="Email"
