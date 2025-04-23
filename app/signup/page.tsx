@@ -80,7 +80,7 @@ export default function SignupPage() {
         {/* Link to login page */}
         <p className="text-sm mt-4 text-center text-black">
           Already have an account?{' '}
-          <Link href="/login" className="text-white font-bold underline">
+          <Link href="/login" className="text-black font-bold underline">
             Login
           </Link>
         </p>
