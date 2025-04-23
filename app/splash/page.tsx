@@ -19,8 +19,11 @@ export default function Splash() {
             <h1 className="text-5xl font-extrabold tracking-tight">DawgDonate</h1>
           </div>
 
-          <p className="text-lg max-w-md mb-8 text-black">
-            Give What You Can, Find What You Need.
+          <p className="text-lg max-w-md mb-8 text-black italic">
+            Give What You Can, Find What You Need
+          </p>
+          <p className="text-lg mb-8 text-black">
+            DawgDonate is an online donation program for UGA students looking to buy items on a budget!
           </p>
 
           {/* Get Started button navigates to login */}

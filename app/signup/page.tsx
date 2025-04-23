@@ -76,7 +76,7 @@ export default function SignupPage() {
 
         {/* Password input */}
         <input
-          type="password"
+          type="password"  // This ensures the password is hidden while typing
           placeholder="Password"
           className="w-full mb-4 p-3 border border-gray-300 rounded text-black placeholder:text-gray-500"
           value={password}
