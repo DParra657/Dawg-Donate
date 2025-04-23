@@ -8,12 +8,8 @@ export default function SignupPage() {
   // Local state for input fields
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-<<<<<<< HEAD
   const [name, setName] = useState('');  // Add state for name
-  const router = useRouter();
-=======
   const router = useRouter(); // Router for navigating to dashboard after signup
->>>>>>> fd217088f951b0002b851bfb21abac70ff7d25e4
 
   // Function to handle form submission
   const handleSignup = async (e: React.FormEvent) => {
@@ -31,14 +27,11 @@ export default function SignupPage() {
     const data = await res.json(); // Parse the response JSON
 
     if (res.ok) {
-<<<<<<< HEAD
+      // Save data to localStorage after successful signup
       localStorage.setItem('username', email);
       localStorage.setItem('name', name);  
+      // Redirect to dashboard after signup
       router.push(`/dashboard/${data.userId}`); 
-=======
-      // Redirect to dashboard if signup is successful
-      router.push(`/dashboard/${data.userId}`);
->>>>>>> fd217088f951b0002b851bfb21abac70ff7d25e4
     } else {
       alert(data.error || 'Signup failed'); // Show error alert if signup fails
     }
@@ -61,7 +54,7 @@ export default function SignupPage() {
 
       {/* Signup form */}
       <form onSubmit={handleSignup} className="w-full max-w-sm bg-white p-8 rounded-xl shadow-lg">
-        {/* Email input */}
+        {/* Name input */}
         <input
           type="text"
           placeholder="Name"
@@ -70,6 +63,8 @@ export default function SignupPage() {
           onChange={(e) => setName(e.target.value)}
           required
         />
+
+        {/* Email input */}
         <input
           type="email"
           placeholder="Email"
@@ -108,4 +103,3 @@ export default function SignupPage() {
     </main>
   );
 }
-
