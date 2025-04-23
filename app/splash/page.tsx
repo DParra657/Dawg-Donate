@@ -1,14 +1,18 @@
-'use client';
-import Image from 'next/image';
-import Link from 'next/link';
-import Header from '../components/Header';
+'use client'; // Enables client-side rendering in Next.js
+
+import Image from 'next/image'; // Optimized image handling from Next.js
+import Link from 'next/link'; // Client-side navigation
+import Header from '../components/Header'; // Reusable Header component
 
 export default function Splash() {
   return (
     <>
+      {/* Header shown for unauthenticated users */}
       <Header isLoggedIn={false} />
 
+      {/* Main splash section layout */}
       <main className="flex flex-col items-center px-6 text-center text-[#DB6B71] font-sans bg-white">
+        {/* Hero section with logo, tagline, and CTA */}
         <div className="w-full bg-[#DB6B71] text-white py-12 px-6 flex flex-col items-center">
           <div className="flex items-center gap-2 mb-4">
             <Image src="/images/logo.png" width={60} height={60} alt="DawgDonate Logo" />
@@ -19,6 +23,7 @@ export default function Splash() {
             Give What You Can, Find What You Need.
           </p>
 
+          {/* Get Started button navigates to login */}
           <Link href="/login">
             <button className="bg-white text-[#DB6B71] font-semibold text-lg px-6 py-2 rounded-full shadow hover:opacity-90 transition">
               Get Started
@@ -26,10 +31,13 @@ export default function Splash() {
           </Link>
         </div>
 
+        {/* Section explaining features */}
         <section className="mt-32">
           <h2 className="text-2xl font-bold">How to Buy/Sell?</h2>
 
+          {/* Four key features shown in a grid */}
           <div className="mt-16 grid grid-cols-2 gap-x-12 gap-y-20 text-sm text-[#DB6B71] max-w-4xl">
+            {/* Feature 1: List Items */}
             <div className="flex flex-col items-center mb-16">
               <Image src="/images/list.png" alt="List Items" width={100} height={100} />
               <p className="mt-3 text-lg font-semibold">List Items</p>
@@ -37,6 +45,8 @@ export default function Splash() {
                 Post your unused items for other students to find and reuse.
               </p>
             </div>
+
+            {/* Feature 2: Easy Shipping */}
             <div className="flex flex-col items-center mb-16">
               <Image src="/images/easy.png" alt="Easy Shipping" width={100} height={100} />
               <p className="mt-3 text-lg font-semibold">Easy Shipping</p>
@@ -44,6 +54,8 @@ export default function Splash() {
                 Coordinate pickups or drop-offs easily with local students.
               </p>
             </div>
+
+            {/* Feature 3: Track Donations */}
             <div className="flex flex-col items-center">
               <Image src="/images/track.png" alt="Track Donations" width={100} height={100} />
               <p className="mt-3 text-lg font-semibold">Track Donations</p>
@@ -51,6 +63,8 @@ export default function Splash() {
                 Stay updated on the status of your donations and orders.
               </p>
             </div>
+
+            {/* Feature 4: Add to Cart */}
             <div className="flex flex-col items-center">
               <Image src="/images/add.png" alt="Add to Cart" width={100} height={100} />
               <p className="mt-3 text-lg font-semibold">Add to Cart</p>
@@ -60,6 +74,7 @@ export default function Splash() {
             </div>
           </div>
 
+          {/* Donation promo section */}
           <div className="mt-24 flex justify-center">
             <div className="w-full max-w-4xl bg-[#DB6B71] text-white rounded-xl px-6 py-8 flex flex-col md:flex-row items-start md:items-center gap-6 shadow-md">
               <div className="flex items-center justify-center">
@@ -85,15 +100,18 @@ export default function Splash() {
         </section>
       </main>
 
+      {/* Footer with branding and about section */}
       <footer
         className="w-full px-10 py-6 flex flex-col md:flex-row justify-between items-center md:items-start text-left"
         style={{ backgroundColor: '#FADCDC' }}
       >
+        {/* Logo and app name */}
         <div className="flex items-center gap-2 md:justify-start w-full md:w-1/3 mb-4 md:mb-0">
           <Image src="/images/logo.png" width={50} height={50} alt="DawgDonate Logo" />
           <span className="text-2xl font-bold text-[#DB6B71]">DawgDonate</span>
         </div>
 
+        {/* About section */}
         <div className="text-center w-full md:w-1/3">
           <h3 className="text-lg font-bold text-[#DB6B71] mb-1">About Us</h3>
           <p className="text-black max-w-md mx-auto">
@@ -104,3 +122,4 @@ export default function Splash() {
     </>
   );
 }
+
