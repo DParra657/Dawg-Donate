@@ -1,0 +1,201 @@
+[33mcommit a4389e81861ef38ef28b1c5bd54a8c6371bbce39[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Priyodarshini Dey <pd46669@uga.edu>
+Date:   Tue Apr 22 22:16:10 2025 -0400
+
+    test add
+
+[33mcommit dcde09c9ff28518a4517e6ff5eb38f619c21a658[m
+Author: Priyodarshini Dey <pd46669@uga.edu>
+Date:   Tue Apr 22 21:15:00 2025 -0400
+
+    Added password field hiding to signup form
+
+[33mcommit c12777d7abffe60e4a884a8550a2b6f1a7430be4[m
+Author: Priyodarshini Dey <pd46669@uga.edu>
+Date:   Tue Apr 22 21:04:33 2025 -0400
+
+    fixed issues with signup page
+
+[33mcommit 7307dc79e5df913b33e1dc675cd2e8a1f9847d44[m
+Merge: a5e22e8 fd21708
+Author: Priyodarshini Dey <pd46669@uga.edu>
+Date:   Tue Apr 22 20:59:53 2025 -0400
+
+    Resolved merge conflicts
+
+[33mcommit a5e22e816b9ca37db12bed19de1a7de22e3f0e11[m
+Author: Priyodarshini Dey <pd46669@uga.edu>
+Date:   Tue Apr 22 20:58:50 2025 -0400
+
+    Added name field to signup form and personalized greeting on dashboard
+
+[33mcommit fd217088f951b0002b851bfb21abac70ff7d25e4[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Tue Apr 22 20:53:48 2025 -0400
+
+    Update page.tsx
+
+[33mcommit 9e2e23ba1d69201b2718a899612e60e701a18fbc[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Tue Apr 22 20:46:53 2025 -0400
+
+    Update mongodb.ts
+
+[33mcommit 95f7109d05020cdaeaf1d52e891df27a8dcbdb36[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Tue Apr 22 20:44:59 2025 -0400
+
+    Update page.tsx
+
+[33mcommit c70b60c4786ef5f038d513a896ba63dae5ace10c[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Tue Apr 22 20:43:45 2025 -0400
+
+    Update page.tsx
+
+[33mcommit c9fa706108afc2ef18ea98e1eaae396212d2d02f[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Tue Apr 22 20:41:52 2025 -0400
+
+    Update page.tsx
+
+[33mcommit 4b5244a9d0eefed91ffc4fcfe728d349a3d3d133[m[33m ([m[1;31morigin/pdey-branch[m[33m)[m
+Author: Priyodarshini Dey <pd46669@uga.edu>
+Date:   Tue Apr 22 19:30:00 2025 -0400
+
+    Edited signup page.tsx
+
+[33mcommit 84e492b4ac3aa8710e7080a0e1f16cb7f8460ca4[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Tue Apr 22 14:58:49 2025 -0400
+
+    Update page.tsx
+
+[33mcommit 54353530ecf9f657ebe710b7061ca55b1eb9bbc9[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Tue Apr 22 14:58:09 2025 -0400
+
+    Update page.tsx
+
+[33mcommit 9ba879120f824e9c4ba169e2deb941c1d3729ce1[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Mon Apr 21 23:10:06 2025 -0400
+
+    Update page.tsx
+
+[33mcommit f34e4089dce0299975848b771a92c2c976bb010a[m
+Merge: 358faa2 7532239
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Sat Apr 19 19:26:35 2025 -0400
+
+    Resolve merge conflicts
+
+[33mcommit 358faa2a3af78f3bc376dd48177478820df496d1[m
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Sat Apr 19 19:21:49 2025 -0400
+
+    Initial commit for DawgDonate project
+
+[33mcommit 753223999afa9d238f27eeff6ae88b4ef96f35c1[m[33m ([m[1;31morigin/Diego[m[33m)[m
+Author: Priyodarshini Dey <pd46669@uga.edu>
+Date:   Sat Apr 19 17:15:33 2025 -0400
+
+    Updated readme page
+
+[33mcommit a6195efb8029655a7510718ce98a278f78390be9[m
+Author: Priyodarshini Dey <pd46669@uga.edu>
+Date:   Sat Apr 19 17:13:34 2025 -0400
+
+    Updated README with project description
+
+[33mcommit c7014df10e6c3fe5e65227357ee34a46c8743afb[m
+Merge: 96f88ed 2630d4b
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Sat Apr 19 17:13:14 2025 -0400
+
+    Merge branch 'main' of https://github.com/DParra657/Dawg-Donate
+
+[33mcommit 96f88ed5d8c834e46740bd1ecd919dd6d713498f[m
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Sat Apr 19 17:11:44 2025 -0400
+
+    Save local changes
+
+[33mcommit 2630d4b45e304fad3f3e78121abb9b499021d394[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Mon Apr 14 18:05:54 2025 -0400
+
+    Update page.tsx
+
+[33mcommit 54e47d71ad06be9a6bd831c8c238d420fec4da00[m
+Author: ridhimareddy15 <159487197+ridhimareddy15@users.noreply.github.com>
+Date:   Mon Apr 14 17:52:33 2025 -0400
+
+    Add files via upload
+
+[33mcommit 94b5252e8a5e1534004438198247460eeb3b7e33[m
+Merge: f7f019c bfc4d9a
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Mon Apr 14 12:44:26 2025 -0400
+
+    Merge branch 'main' of https://github.com/DParra657/Dawg-Donate
+
+[33mcommit f7f019c5f5e05ec9669f85610358bcdd5d0239ac[m
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Mon Apr 14 12:42:25 2025 -0400
+
+    Save local changes
+
+[33mcommit bfc4d9ae8ceda76534d5c8f4ec66ae93b4b35960[m
+Merge: e92f47d 91df2be
+Author: Keerthur04 <keerthur2004@gmail.com>
+Date:   Fri Apr 11 12:49:55 2025 -0400
+
+    Merge pull request #3 from DParra657/Keerthana
+    
+    Signup, add, changed some UI
+
+[33mcommit 91df2be505aa07c1fe7c87b07700d6d83188184a[m[33m ([m[1;31morigin/Keerthana[m[33m)[m
+Author: Keerthur11 <kr36621@uga.edu>
+Date:   Fri Apr 11 12:45:33 2025 -0400
+
+    Signup, add, changed some UI
+
+[33mcommit e92f47d369da33e123a8ad7958ffb2a3431cc176[m
+Merge: 6f52ccb c90528e
+Author: Keerthur04 <keerthur2004@gmail.com>
+Date:   Fri Apr 11 12:07:20 2025 -0400
+
+    Merge pull request #2 from DParra657/Keerthana
+    
+    Login adn authenticated view
+
+[33mcommit c90528e5a9f6442166060424c0f10d63fc258998[m
+Author: Keerthur11 <kr36621@uga.edu>
+Date:   Fri Apr 11 11:57:11 2025 -0400
+
+    Login adn authenticated view
+
+[33mcommit 6f52ccb8e56d69cc4546911d6f0d47168a92d161[m
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Thu Apr 10 13:32:33 2025 -0400
+
+    Refactor project structure and add new components
+
+[33mcommit 9040a5378624af2939b7576be6e23708c749a15b[m
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Thu Apr 10 13:03:55 2025 -0400
+
+    Refactor project structure and add new components
+
+[33mcommit 2abf48100c8270fe898997c599e4e0ef5ece4432[m
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Wed Apr 9 00:09:03 2025 -0400
+
+    first commit
+
+[33mcommit 627ab4aceb3fafbfa81952331edf0969b1e3d33e[m
+Author: DParra657 <Diegoparra657@gmail.com>
+Date:   Wed Apr 9 00:04:35 2025 -0400
+
+    Initial project setup with Next.js and dependencies
