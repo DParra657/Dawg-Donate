@@ -6,10 +6,10 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/splash/page": [
+    "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/splash/page.js"
+      "static/chunks/app/page.js"
     ],
     "/splash/page": [
       "static/chunks/webpack.js",
@@ -21,17 +21,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/login/page.js"
     ],
-<<<<<<< HEAD
     "/api/login/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/login/route.js"
-=======
+    ],
     "/dashboard/[userId]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/[userId]/page.js"
->>>>>>> 753223999afa9d238f27eeff6ae88b4ef96f35c1
     ],
     "/signup/page": [
       "static/chunks/webpack.js",
@@ -42,16 +40,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/users/route.js"
-    ],
-    "/dashboard/[userId]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/dashboard/[userId]/page.js"
-    ],
-    "/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
     ]
   }
 }

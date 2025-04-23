@@ -1,18 +1,9 @@
 {
-<<<<<<< HEAD
-  "/api/login/route": "app/api/login/route.js",
   "/api/users/route": "app/api/users/route.js",
+  "/api/login/route": "app/api/login/route.js",
   "/splash/page": "app/splash/page.js",
   "/login/page": "app/login/page.js",
+  "/dashboard/[userId]/page": "app/dashboard/[userId]/page.js",
   "/signup/page": "app/signup/page.js",
-  "/dashboard/[userId]/page": "app/dashboard/[userId]/page.js",
   "/page": "app/page.js"
-=======
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/page": "app/page.js",
-  "/splash/page": "app/splash/page.js",
-  "/login/page": "app/login/page.js",
-  "/dashboard/[userId]/page": "app/dashboard/[userId]/page.js",
-  "/signup/page": "app/signup/page.js"
->>>>>>> 753223999afa9d238f27eeff6ae88b4ef96f35c1
 }

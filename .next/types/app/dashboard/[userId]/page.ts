@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 // File: C:\Users\dparr\Documents\Real Group Project\app\dashboard\[userId]\page.tsx
-=======
-// File: C:\Users\priya\OneDrive\Desktop\webProg\DawgDonate\app\dashboard\[userId]\page.tsx
->>>>>>> 753223999afa9d238f27eeff6ae88b4ef96f35c1
 import * as entry from '../../../../../app/dashboard/[userId]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
