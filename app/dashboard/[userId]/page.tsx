@@ -4,10 +4,9 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Header from '../../components/Header';
-import { items as initialItems } from '../../data/dummyData';
 
 type Item = {
-  id: number;
+  id: string; // Use string for MongoDB ObjectId
   title: string;
   image: string;
 };
@@ -15,45 +14,102 @@ type Item = {
 export default function DashboardPage() {
   const [name, setName] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [items, setItems] = useState<Item[]>(initialItems);
+  const [items, setItems] = useState<Item[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [newItem, setNewItem] = useState<Item>({ id: Date.now(), title: '', image: '' });
+  const [newItem, setNewItem] = useState<Item>({ id: '', title: '', image: '' });
   const params = useParams();
-  const userId = params?.userId || 'Unknown User';
+  const userId = Array.isArray(params?.userId) ? params.userId[0] : params?.userId || '';
 
   const checkSession = async () => {
-    return new Promise<{ token: string | null; name: string | null }>((resolve) => {
-      setTimeout(() => {
-        resolve({
-          token: typeof window !== 'undefined' ? localStorage.getItem('authToken') : null,
-          name: typeof window !== 'undefined' ? localStorage.getItem('name') : null,
-        });
-      }, 300);
-    });
+    if (typeof window === 'undefined') return { token: null, name: null };
+
+    const token = localStorage.getItem('authToken');
+    const name = localStorage.getItem('name');
+    return { token, name };
+  };
+
+  // Fetch items from the backend
+  const fetchItems = async () => {
+    try {
+      if (!userId) {
+        console.error('User ID is missing');
+        return;
+      }
+
+      const res = await fetch('/api/items', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', userId }, // Pass userId as a string
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setItems(data); // Set items from the backend
+      } else {
+        console.error('Error fetching items:', data.error);
+      }
+    } catch (error) {
+      console.error('Error fetching items:', error);
+    }
   };
 
   useEffect(() => {
     checkSession().then(({ token, name }) => {
-      console.log('Token:', token, 'Name:', name); // Debugging
       if (token && name) {
         setIsAuthenticated(true);
         setName(name);
+        fetchItems(); // Fetch items after authentication
+      } else {
+        console.error('Authentication failed');
       }
     });
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newItem.title || !newItem.image) return;
-    if (editingIndex !== null) {
-      const updated = [...items];
-      updated[editingIndex] = { ...newItem, id: updated[editingIndex].id };
-      setItems(updated);
-      setEditingIndex(null);
-    } else {
-      setItems([...items, { ...newItem, id: Date.now() }]);
+
+    try {
+      if (!userId) {
+        console.error('User ID is missing');
+        return;
+      }
+
+      if (editingIndex !== null) {
+        // Update an existing item
+        const updatedItem = { ...newItem, id: items[editingIndex].id };
+        const res = await fetch('/api/items', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...updatedItem, userId }),
+        });
+
+        if (res.ok) {
+          const updated = [...items];
+          updated[editingIndex] = updatedItem;
+          setItems(updated);
+          setEditingIndex(null);
+        } else {
+          console.error('Error updating item');
+        }
+      } else {
+        // Add a new item
+        const res = await fetch('/api/items', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...newItem, userId }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          setItems([...items, { ...newItem, id: data.id }]);
+        } else {
+          console.error('Error adding item:', data.error);
+        }
+      }
+      setNewItem({ id: '', title: '', image: '' });
+    } catch (error) {
+      console.error('Error submitting item:', error);
     }
-    setNewItem({ id: Date.now(), title: '', image: '' });
   };
 
   const handleEdit = (index: number) => {
@@ -62,15 +118,32 @@ export default function DashboardPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = (index: number) => {
-    const updated = [...items];
-    updated.splice(index, 1);
-    setItems(updated);
+  const handleDelete = async (index: number) => {
+    try {
+      if (!userId) {
+        console.error('User ID is missing');
+        return;
+      }
+  
+      const itemId = items[index].id;
+      const res = await fetch('/api/items', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: itemId, userId }), // Send itemId and userId in the body
+      });
+  
+      if (res.ok) {
+        const updated = [...items];
+        updated.splice(index, 1);
+        setItems(updated);
+      } else {
+        const errorData = await res.json();
+        console.error('Error deleting item:', errorData.error);
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
   };
-
-  if (!isAuthenticated) {
-    return <p>Please log in to view your dashboard.</p>;
-  }
 
   return (
     <>
@@ -108,7 +181,7 @@ export default function DashboardPage() {
           <h2 className="text-2xl font-bold mb-6 text-center">Items Donated</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {items.map((item, index) => (
-              <div key={item.id} className="bg-white text-black p-4 rounded-xl shadow-md text-center">
+              <div key={item.id || index} className="bg-white text-black p-4 rounded-xl shadow-md text-center">
                 <Image src={item.image || '/placeholder.png'} alt={item.title} width={200} height={200} className="mx-auto mb-4 rounded" />
                 <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
                 <div className="flex justify-center gap-2">

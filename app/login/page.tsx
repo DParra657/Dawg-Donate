@@ -26,6 +26,7 @@ export default function LoginPage() {
     // If login is successful, redirect to user's dashboard
     if (res.ok) {
       localStorage.setItem('authToken', data.data.token);  // make sure your API returns this
+      localStorage.setItem('userId', data.data.userId);
       localStorage.setItem('name', data.data.name);
 
       router.push(`/dashboard/${data.data.userId}`);

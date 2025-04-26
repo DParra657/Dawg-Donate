@@ -16,6 +16,11 @@
       "static/chunks/main-app.js",
       "static/chunks/app/splash/page.js"
     ],
+    "/login/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/login/page.js"
+    ],
     "/signup/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -31,10 +36,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/dashboard/[userId]/page.js"
     ],
-    "/login/page": [
+    "/api/items/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/login/page.js"
+      "static/chunks/app/api/items/route.js"
     ],
     "/api/login/route": [
       "static/chunks/webpack.js",
