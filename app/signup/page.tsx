@@ -26,10 +26,10 @@ export default function SignupPage() {
     const data = await res.json();
   
     if (res.ok) {
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('userId', data.userId);
-      localStorage.setItem('name', name);
-      localStorage.setItem('email', email);
+      localStorage.setItem('authToken', data.data.token);
+localStorage.setItem('userId', data.data.userId);
+localStorage.setItem('name', data.data.name);
+localStorage.setItem('email', data.data.email);
   
       router.push(`/dashboard/${data.userId}`);
     } else {
@@ -40,6 +40,7 @@ export default function SignupPage() {
     setPassword('');
     setName('');
   };
+  
   
 
   return (

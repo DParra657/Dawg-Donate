@@ -1,30 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectMongoDB from '@/config/mongodb';
-import mongoose from 'mongoose';
-
-// Define a Mongoose schema and model for users
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  name: { type: String, required: true },
-  items: {
-    type: [
-      {
-        _id: { type: mongoose.Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() }, // Add _id field
-        title: String,
-        image: String,
-      },
-    ],
-    default: [], // Ensure items array is initialized as empty
-  },
-});
-
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+import { User } from '@/models/User'; // ✅ Import only from models/User
+import { Item } from '@/models/Item'; 
+import mongoose from 'mongoose';// ✅ IMPORT ONLY
 
 // GET: Fetch all items for a specific user
 export async function GET(req: Request) {
   try {
-    const userId = req.headers.get('userId'); // Retrieve userId from request headers
+    const userId = req.headers.get('userId'); // Get userId from headers
 
     if (!userId) {
       return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
@@ -32,66 +15,70 @@ export async function GET(req: Request) {
 
     await connectMongoDB();
 
-    // Find the user by userId
-    const user = await User.findById(userId);
-    if (!user) {
+    const userDoc = await User.findById(userId);
+    if (!userDoc) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Ensure items is always an array
-    const items = (user.items || []).map((item: { _id: { toString: () => string }; title: string; image: string }) => ({
-      id: item._id?.toString() || '', // Convert ObjectId to string
+    const user = userDoc.toObject(); // Convert document to plain object
+
+    if (!user.items || user.items.length === 0) {
+      return NextResponse.json({ message: 'No items found for this user' }, { status: 200 });
+    }
+
+    const items = user.items.map((item: any) => ({
+      id: item._id.toString(),
       title: item.title,
       image: item.image,
     }));
 
-    // Return the user's items
-    return NextResponse.json(items);
+    return NextResponse.json(items, { status: 200 });
   } catch (error) {
     console.error('Error fetching items:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-// POST: Add a new item to the user's account
+// POST: Add a new item to user's items
 export async function POST(req: Request) {
   try {
+    // Parse JSON body
     const body = await req.json();
-    const { title, image, userId } = body; // Include userId in the request body
+    const { title, image, userId } = body;
 
     if (!title || !image || !userId) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
     await connectMongoDB();
 
-    // Find the user by userId
     const user = await User.findById(userId);
     if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Ensure items array exists
-    if (!user.items) {
-      user.items = [];
-    }
+    // Push new item
+    user.items.push({
+      _id: new mongoose.Types.ObjectId(), // ✅ Explicitly give _id
+      title,
+      image,
+    });
 
-    // Add the new item to the user's items array
-    user.items.push({ title, image });
-    await user.save(); // Save the updated user document
+    user.markModified('items'); // tell mongoose the items array changed
+    await user.save();
 
-    return NextResponse.json({ message: 'Item added to account', id: user.items[user.items.length - 1]._id?.toString() || '' }, { status: 201 });
-  } catch (error) {
-    console.error('POST error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ message: "Item successfully added" }, { status: 201 });
+
+  } catch (error: any) {
+    console.error("POST error:", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }
 
 // PUT: Update an existing item in the user's account
 export async function PUT(req: Request) {
   try {
-    const body = await req.json();
-    const { id, title, image, userId } = body; // Include item id, title, image, and userId in the request body
+    const { id, title, image, userId } = await req.json();
 
     if (!id || !title || !image || !userId) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
@@ -99,22 +86,20 @@ export async function PUT(req: Request) {
 
     await connectMongoDB();
 
-    // Find the user by userId
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Find the item by its id
     const item = user.items.id(id);
     if (!item) {
       return NextResponse.json({ error: 'Item not found' }, { status: 404 });
     }
 
-    // Update the item's title and image
     item.title = title;
     item.image = image;
-    await user.save(); // Save the updated user document
+
+    await user.save();
 
     return NextResponse.json({ message: 'Item updated successfully' }, { status: 200 });
   } catch (error) {
@@ -126,13 +111,12 @@ export async function PUT(req: Request) {
 // DELETE: Remove an item from the user's account
 export async function DELETE(req: Request) {
   try {
-    const bodyText = await req.text(); // Read the raw request body as text
-    if (!bodyText) {
+    const body = await req.text();
+    if (!body) {
       return NextResponse.json({ error: 'Request body is missing' }, { status: 400 });
     }
 
-    const body = JSON.parse(bodyText); // Parse the request body
-    const { id, userId } = body; // Extract item id and userId from the body
+    const { id, userId } = JSON.parse(body);
 
     if (!id || !userId) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
@@ -140,15 +124,14 @@ export async function DELETE(req: Request) {
 
     await connectMongoDB();
 
-    // Find the user by userId
     const user = await User.findById(userId);
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Remove the item by its id
-    user.items = user.items.filter((item: { _id: { toString: () => string } }) => item._id?.toString() !== id);
-    await user.save(); // Save the updated user document
+    user.items = user.items.filter((item: any) => item._id.toString() !== id);
+
+    await user.save();
 
     return NextResponse.json({ message: 'Item deleted successfully' }, { status: 200 });
   } catch (error) {

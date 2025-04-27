@@ -1,22 +1,10 @@
 import { NextResponse } from 'next/server';
 import connectMongoDB from '@/config/mongodb';
-import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { User } from '@/models/User';
 
-// Define a Mongoose schema and model for users
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  name: { type: String, required: true },
-  items: [
-    {
-      title: String,
-      image: String,
-    },
-  ], // Array of items associated with the user
-});
 
-const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export async function POST(req: Request) {
   try {
@@ -47,8 +35,24 @@ export async function POST(req: Request) {
       items: [], // Initialize with an empty array
     });
 
+    
+
     // Save the new user to the database
     const result = await newUser.save();
+
+    // after saving newUser:
+    const token = jwt.sign({ userId: result._id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Signup successful',
+      data: {
+        userId: result._id,
+        name: result.name, // 👈 name will now exist!
+        token,
+      },
+    });
+
 
     return NextResponse.json({ message: 'User created successfully', userId: result._id });
   } catch (error) {

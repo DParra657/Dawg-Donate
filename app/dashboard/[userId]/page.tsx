@@ -30,28 +30,54 @@ export default function DashboardPage() {
 
   // Fetch items from the backend
   const fetchItems = async () => {
+    const userId = localStorage.getItem('userId');
+    console.log('Fetching items with userId:', userId);
+    
+    if (!userId) {
+      console.error('No userId found in localStorage');
+      return;
+    }
+    
     try {
-      if (!userId) {
-        console.error('User ID is missing');
-        return;
-      }
-
       const res = await fetch('/api/items', {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json', userId }, // Pass userId as a string
+        headers: {
+          'Content-Type': 'application/json',
+          'userId': userId,
+        },
       });
-
+      
+      if (!res.ok) {
+        console.error('Failed to fetch items');
+        return;
+      }
+      
       const data = await res.json();
-      if (res.ok) {
-        setItems(data); // Set items from the backend
+      console.log('API response data:', data); // Log the data to see its structure
+  
+      // Check if data is an array before mapping
+      if (Array.isArray(data)) {
+        const mapped = data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          image: item.image,
+        }));
+        setItems(mapped);
+      } else if (data.message === 'No items found for this user') {
+        // Handle the case where there are no items
+        console.log('No items found for this user');
+        setItems([]);
       } else {
-        console.error('Error fetching items:', data.error);
+        // If data is not an array and not a known response type
+        console.error('Unexpected data format from API:', data);
+        setItems([]);
       }
     } catch (error) {
       console.error('Error fetching items:', error);
+      setItems([]);
     }
   };
-
+  
   useEffect(() => {
     checkSession().then(({ token, name }) => {
       if (token && name) {
@@ -95,7 +121,10 @@ export default function DashboardPage() {
         // Add a new item
         const res = await fetch('/api/items', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({ ...newItem, userId }),
         });
 

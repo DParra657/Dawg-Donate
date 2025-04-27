@@ -20,11 +20,13 @@ export default function AccountPage() {
 
   const checkSession = async () => {
     if (typeof window === 'undefined') return { token: null, name: null, email: null };
+  
     const token = localStorage.getItem('authToken');
     const name = localStorage.getItem('name');
-    const email = localStorage.getItem('email');
+    const email = localStorage.getItem('email'); // ✅ Also fetch email
     return { token, name, email };
   };
+  
 
   const fetchItems = async (userId: string) => {
     try {
