@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Header from '../../components/Header';
+import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 type Item = {
   id: string;
   title: string;
   image: string;
+  isPublic: boolean; // Added isPublic property
 };
 
 export default function DashboardPage() {
@@ -16,13 +18,14 @@ export default function DashboardPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [newItem, setNewItem] = useState<Item>({ id: '', title: '', image: '' });
+  const [newItem, setNewItem] = useState<Item>({ id: '', title: '', image: '', isPublic: false });
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
   const [filteredItems, setFilteredItems] = useState<Item[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({
     title: '',
-    image: ''
+    image: '', 
+    isPublic: false
   }); // State for filtered items
   const params = useParams();
   const userId = Array.isArray(params?.userId) ? params.userId[0] : params?.userId || '';
@@ -67,6 +70,7 @@ export default function DashboardPage() {
           id: item.id,
           title: item.title,
           image: item.image,
+          isPublic: item.isPublic || false, // Default to false if not provided
         }));
         setItems(mapped);
         setFilteredItems(mapped); // Initialize filteredItems with all items
@@ -127,7 +131,7 @@ export default function DashboardPage() {
         // Use the full item returned from backend
         setItems(prev => [...prev, data.item]);
         setFilteredItems(prev => [...prev, data.item]);
-        setNewItem({ id: '', title: '', image: '' });
+        setNewItem({ id: '', title: '', image: '', isPublic: false }); // Reset newItem state
       } else {
         console.error('Error adding item:', data.error);
       }
@@ -144,7 +148,8 @@ export default function DashboardPage() {
       setEditingId(itemId);
       setEditForm({
         title: itemToEdit.title,
-        image: itemToEdit.image
+        image: itemToEdit.image,
+        isPublic: itemToEdit.isPublic, // Include isPublic in the edit form
       });
     }
   };
@@ -179,7 +184,12 @@ export default function DashboardPage() {
         
         // Reset edit state
         setEditingId(null);
-        setEditForm({ title: '', image: '' });
+        setEditForm({ title: '', image: '', isPublic: false });
+        setNewItem({ id: '', title: '', image: '', isPublic: false }); // Reset newItem state
+      } else if (res.status === 404) {
+        console.error('Item not found for editing:', editingId);
+      } else if (res.status === 400) {
+        console.error('Bad request:', await res.json());
       } else {
         const errorData = await res.json();
         console.error('Update failed:', errorData.error);
@@ -236,41 +246,62 @@ export default function DashboardPage() {
             value={searchQuery}
             onChange={handleSearch}
           />
+  
+          {/* Form */}
           <form onSubmit={editingId ? handleEditSubmit : handleSubmit}>
             <input
               type="text"
               placeholder="Item Title"
               className="w-full mb-4 p-3 border border-gray-300 rounded"
               value={editingId ? editForm.title : newItem.title}
-              onChange={(e) => 
-                editingId 
-                  ? setEditForm({...editForm, title: e.target.value}) 
-                  : setNewItem({...newItem, title: e.target.value})
+              onChange={(e) =>
+                editingId
+                  ? setEditForm({ ...editForm, title: e.target.value })
+                  : setNewItem({ ...newItem, title: e.target.value })
               }
               required
             />
+  
             <input
               type="text"
               placeholder="Image URL"
               className="w-full mb-4 p-3 border border-gray-300 rounded"
               value={editingId ? editForm.image : newItem.image}
-              onChange={(e) => 
-                editingId 
-                  ? setEditForm({...editForm, image: e.target.value}) 
-                  : setNewItem({...newItem, image: e.target.value})
+              onChange={(e) =>
+                editingId
+                  ? setEditForm({ ...editForm, image: e.target.value })
+                  : setNewItem({ ...newItem, image: e.target.value })
               }
               required
             />
+  
+            {/* 🔥 New Make Public Checkbox */}
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                title="Make this donation public"
+                checked={editingId ? editForm.isPublic : newItem.isPublic}
+                onChange={(e) =>
+                  editingId
+                    ? setEditForm({ ...editForm, isPublic: e.target.checked })
+                    : setNewItem({ ...newItem, isPublic: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <label className="text-sm text-black">Make this donation public</label>
+            </div>
+  
             <button type="submit" className="w-full bg-black text-white py-2 rounded">
               {editingId ? 'Update Item' : 'Add Item'}
             </button>
+  
             {editingId && (
-              <button 
+              <button
                 type="button"
                 onClick={() => {
                   setEditingId(null);
-                  setEditForm({ title: '', image: '' });
-                  setNewItem({ id: '', title: '', image: '' });
+                  setEditForm({ title: '', image: '', isPublic: false });
+                  setNewItem({ id: '', title: '', image: '', isPublic: false });
                 }}
                 className="w-full bg-gray-500 text-white py-2 rounded mt-2"
               >
@@ -285,23 +316,23 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {filteredItems.map((item) => (
               <div key={item.id} className="bg-white text-black p-4 rounded-xl shadow-md text-center">
-                <Image 
-                  src={item.image || '/placeholder.png'} 
-                  alt={item.title} 
-                  width={200} 
-                  height={200} 
-                  className="mx-auto mb-4 rounded" 
+                <Image
+                  src={item.image || '/placeholder.png'}
+                  alt={item.title}
+                  width={200}
+                  height={200}
+                  className="mx-auto mb-4 rounded"
                 />
                 <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
                 <div className="flex justify-center gap-2">
-                  <button 
-                    onClick={() => handleEditClick(item.id)} 
+                  <button
+                    onClick={() => handleEditClick(item.id)}
                     className="bg-yellow-500 text-white px-3 py-1 rounded text-sm"
                   >
                     Edit
                   </button>
-                  <button 
-                    onClick={() => handleDelete(items.findIndex(i => i.id === item.id))} 
+                  <button
+                    onClick={() => handleDelete(items.findIndex(i => i.id === item.id))}
                     className="bg-red-500 text-white px-3 py-1 rounded text-sm"
                   >
                     Delete
@@ -314,4 +345,4 @@ export default function DashboardPage() {
       </main>
     </>
   );
-}
+}  

@@ -21,7 +21,8 @@ const userSchema = new mongoose.Schema({
     type: [{
       _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, // This is crucial
       title: String,
-      image: String
+      image: String,
+      isPublic: { type: Boolean, default: true }
     }],
     default: []
   }
