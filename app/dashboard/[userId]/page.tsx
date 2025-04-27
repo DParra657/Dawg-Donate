@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Header from '../../components/Header';
 
 type Item = {
-  id: string; // Use string for MongoDB ObjectId
+  id: string;
   title: string;
   image: string;
 };
@@ -17,6 +17,8 @@ export default function DashboardPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newItem, setNewItem] = useState<Item>({ id: '', title: '', image: '' });
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [filteredItems, setFilteredItems] = useState<Item[]>([]); // State for filtered items
   const params = useParams();
   const userId = Array.isArray(params?.userId) ? params.userId[0] : params?.userId || '';
 
@@ -55,7 +57,6 @@ export default function DashboardPage() {
       const data = await res.json();
       console.log('API response data:', data); // Log the data to see its structure
   
-      // Check if data is an array before mapping
       if (Array.isArray(data)) {
         const mapped = data.map((item) => ({
           id: item.id,
@@ -63,18 +64,16 @@ export default function DashboardPage() {
           image: item.image,
         }));
         setItems(mapped);
-      } else if (data.message === 'No items found for this user') {
-        // Handle the case where there are no items
-        console.log('No items found for this user');
-        setItems([]);
+        setFilteredItems(mapped); // Initialize filteredItems with all items
       } else {
-        // If data is not an array and not a known response type
         console.error('Unexpected data format from API:', data);
         setItems([]);
+        setFilteredItems([]);
       }
     } catch (error) {
       console.error('Error fetching items:', error);
       setItems([]);
+      setFilteredItems([]);
     }
   };
   
@@ -90,52 +89,43 @@ export default function DashboardPage() {
     });
   }, []);
 
+  // Handle the search input and filter items
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    // Filter items based on title matching the search query (case-insensitive)
+    const filtered = items.filter(item =>
+      item.title.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredItems(filtered); // Update filteredItems state with the filtered results
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newItem.title || !newItem.image) return;
-
+  
     try {
-      if (!userId) {
-        console.error('User ID is missing');
-        return;
-      }
-
-      if (editingIndex !== null) {
-        // Update an existing item
-        const updatedItem = { ...newItem, id: items[editingIndex].id };
-        const res = await fetch('/api/items', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...updatedItem, userId }),
-        });
-
-        if (res.ok) {
-          const updated = [...items];
-          updated[editingIndex] = updatedItem;
-          setItems(updated);
-          setEditingIndex(null);
-        } else {
-          console.error('Error updating item');
-        }
+      const res = await fetch('/api/items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          title: newItem.title,
+          image: newItem.image,
+          userId 
+        }),
+      });
+  
+      const data = await res.json();
+  
+      if (res.ok) {
+        // Use the full item returned from backend
+        setItems(prev => [...prev, data.item]);
+        setFilteredItems(prev => [...prev, data.item]);
+        setNewItem({ id: '', title: '', image: '' });
       } else {
-        // Add a new item
-        const res = await fetch('/api/items', {
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ ...newItem, userId }),
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          setItems([...items, { ...newItem, id: data.id }]);
-        } else {
-          console.error('Error adding item:', data.error);
-        }
+        console.error('Error adding item:', data.error);
       }
-      setNewItem({ id: '', title: '', image: '' });
     } catch (error) {
       console.error('Error submitting item:', error);
     }
@@ -165,6 +155,7 @@ export default function DashboardPage() {
         const updated = [...items];
         updated.splice(index, 1);
         setItems(updated);
+        setFilteredItems(updated); // Update filteredItems
       } else {
         const errorData = await res.json();
         console.error('Error deleting item:', errorData.error);
@@ -183,6 +174,14 @@ export default function DashboardPage() {
         </section>
 
         <section className="bg-white text-black p-6 rounded-xl shadow-md max-w-xl mx-auto mb-16">
+          {/* Search bar */}
+          <input
+            type="text"
+            placeholder="Search Items"
+            className="w-full mb-4 p-3 border border-gray-300 rounded"
+            value={searchQuery}
+            onChange={handleSearch}
+          />
           <form onSubmit={handleSubmit}>
             <input
               type="text"
@@ -209,7 +208,7 @@ export default function DashboardPage() {
         <section className="max-w-6xl mx-auto">
           <h2 className="text-2xl font-bold mb-6 text-center">Items Donated</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {items.map((item, index) => (
+            {filteredItems.map((item, index) => (
               <div key={item.id || index} className="bg-white text-black p-4 rounded-xl shadow-md text-center">
                 <Image src={item.image || '/placeholder.png'} alt={item.title} width={200} height={200} className="mx-auto mb-4 rounded" />
                 <h3 className="text-lg font-semibold mb-2">{item.title}</h3>

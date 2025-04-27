@@ -13,18 +13,19 @@ export interface IUser extends Document {
 }
 
 // 2. Define the Mongoose Schema
-const UserSchema = new Schema<IUser>({
+const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   name: { type: String, required: true },
-  items: [
-    {
-      _id: { type: mongoose.Schema.Types.ObjectId, default: () => new mongoose.Types.ObjectId() },
-      title: { type: String, required: true },
-      image: { type: String, required: true },
-    },
-  ],
+  items: {
+    type: [{
+      _id: { type: mongoose.Schema.Types.ObjectId, auto: true }, // This is crucial
+      title: String,
+      image: String
+    }],
+    default: []
+  }
 });
 
 // 3. Export a REAL Mongoose Model
-export const User = models.User || model<IUser>('User', UserSchema);
+export const User = models.User || model<IUser>('User', userSchema);

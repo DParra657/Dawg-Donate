@@ -39,16 +39,12 @@ export async function GET(req: Request) {
   }
 }
 
-// POST: Add a new item to user's items
+// POST /api/items
 export async function POST(req: Request) {
   try {
-    // Parse JSON body
-    const body = await req.json();
-    const { title, image, userId } = body;
+    const { title, image, userId } = await req.json();
 
-    if (!title || !image || !userId) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
+    // ... (validation checks)
 
     await connectMongoDB();
 
@@ -57,21 +53,42 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Push new item
-    user.items.push({
-      _id: new mongoose.Types.ObjectId(), // ✅ Explicitly give _id
-      title,
-      image,
-    });
+    // Initialize items array if it doesn't exist
+    if (!user.items) {
+      user.items = [];
+    }
 
-    user.markModified('items'); // tell mongoose the items array changed
+    // Create new item with explicit _id
+    const newItem = {
+      _id: new mongoose.Types.ObjectId(), // Explicitly create ID
+      title,
+      image
+    };
+
+    user.items.push(newItem);
     await user.save();
 
-    return NextResponse.json({ message: "Item successfully added" }, { status: 201 });
+    // Get the newly created item
+    const createdItem = user.items[user.items.length - 1];
 
-  } catch (error: any) {
+    // Safely handle ID conversion
+    const itemId = createdItem._id ? createdItem._id.toString() : '';
+
+    return NextResponse.json({
+      message: "Item created successfully",
+      item: {
+        id: itemId,
+        title: createdItem.title,
+        image: createdItem.image
+      }
+    }, { status: 201 });
+
+  } catch (error) {
     console.error("POST error:", error);
-    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
 
