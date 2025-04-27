@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectMongoDB from '@/config/mongodb';
-import { User } from '@/models/User'; // ✅ Import only from models/User
-import { Item } from '@/models/Item'; 
+import { IUser, User } from '@/models/User'; // ✅ Import only from models/User
+import { IItem, Item } from '@/models/Item'; 
 import mongoose from 'mongoose';// ✅ IMPORT ONLY
 
 // GET: Fetch all items for a specific user
@@ -92,38 +92,57 @@ export async function POST(req: Request) {
   }
 }
 
-// PUT: Update an existing item in the user's account
+//PUT:
+// PUT /api/items
+// app/api/items/route.ts
 export async function PUT(req: Request) {
   try {
     const { id, title, image, userId } = await req.json();
 
     if (!id || !title || !image || !userId) {
-      return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
     }
 
-    await connectMongoDB();
+    await mongoose.connect(process.env.MONGODB_URI!);
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    // Directly update the specific item in the user's items array
+    const result = await User.updateOne(
+      {
+        _id: userId,
+        "items._id": new mongoose.Types.ObjectId(id)
+      },
+      {
+        $set: {
+          "items.$.title": title,
+          "items.$.image": image
+        }
+      }
+    );
+
+    if (result.modifiedCount === 0) {
+      return NextResponse.json(
+        { error: "Item not found or no changes made" },
+        { status: 404 }
+      );
     }
 
-    const item = user.items.id(id);
-    if (!item) {
-      return NextResponse.json({ error: 'Item not found' }, { status: 404 });
-    }
+    return NextResponse.json(
+      { message: "Item updated successfully" },
+      { status: 200 }
+    );
 
-    item.title = title;
-    item.image = image;
-
-    await user.save();
-
-    return NextResponse.json({ message: 'Item updated successfully' }, { status: 200 });
   } catch (error) {
-    console.error('PUT error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("PUT error:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
+
 
 // DELETE: Remove an item from the user's account
 export async function DELETE(req: Request) {

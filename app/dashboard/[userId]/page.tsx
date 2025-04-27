@@ -18,7 +18,12 @@ export default function DashboardPage() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [newItem, setNewItem] = useState<Item>({ id: '', title: '', image: '' });
   const [searchQuery, setSearchQuery] = useState(''); // State for search query
-  const [filteredItems, setFilteredItems] = useState<Item[]>([]); // State for filtered items
+  const [filteredItems, setFilteredItems] = useState<Item[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    image: ''
+  }); // State for filtered items
   const params = useParams();
   const userId = Array.isArray(params?.userId) ? params.userId[0] : params?.userId || '';
 
@@ -131,11 +136,60 @@ export default function DashboardPage() {
     }
   };
 
-  const handleEdit = (index: number) => {
-    setNewItem(items[index]);
-    setEditingIndex(index);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  
+
+  const handleEditClick = (itemId: string) => {
+    const itemToEdit = items.find(item => item.id === itemId);
+    if (itemToEdit) {
+      setEditingId(itemId);
+      setEditForm({
+        title: itemToEdit.title,
+        image: itemToEdit.image
+      });
+    }
   };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!editingId || !editForm.title || !editForm.image || !userId) {
+      console.error("Missing required fields");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/items', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingId,
+          title: editForm.title,
+          image: editForm.image,
+          userId
+        }),
+      });
+      if (res.ok) {
+        // Update local state
+        setItems(items.map(item => 
+          item.id === editingId ? { ...item, title: editForm.title, image: editForm.image } : item
+        ));
+        setFilteredItems(filteredItems.map(item => 
+          item.id === editingId ? { ...item, title: editForm.title, image: editForm.image } : item
+        ));
+        
+        // Reset edit state
+        setEditingId(null);
+        setEditForm({ title: '', image: '' });
+      } else {
+        const errorData = await res.json();
+        console.error('Update failed:', errorData.error);
+      }
+    } catch (error) {
+      console.error('Edit error:', error);
+    }
+  };
+
+      
 
   const handleDelete = async (index: number) => {
     try {
@@ -172,7 +226,7 @@ export default function DashboardPage() {
         <section className="text-center mb-12">
           <h1 className="text-3xl font-bold">Welcome to your donations, {name}!</h1>
         </section>
-
+  
         <section className="bg-white text-black p-6 rounded-xl shadow-md max-w-xl mx-auto mb-16">
           {/* Search bar */}
           <input
@@ -182,41 +236,74 @@ export default function DashboardPage() {
             value={searchQuery}
             onChange={handleSearch}
           />
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={editingId ? handleEditSubmit : handleSubmit}>
             <input
               type="text"
               placeholder="Item Title"
               className="w-full mb-4 p-3 border border-gray-300 rounded"
-              value={newItem.title}
-              onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+              value={editingId ? editForm.title : newItem.title}
+              onChange={(e) => 
+                editingId 
+                  ? setEditForm({...editForm, title: e.target.value}) 
+                  : setNewItem({...newItem, title: e.target.value})
+              }
               required
             />
             <input
               type="text"
               placeholder="Image URL"
               className="w-full mb-4 p-3 border border-gray-300 rounded"
-              value={newItem.image}
-              onChange={(e) => setNewItem({ ...newItem, image: e.target.value })}
+              value={editingId ? editForm.image : newItem.image}
+              onChange={(e) => 
+                editingId 
+                  ? setEditForm({...editForm, image: e.target.value}) 
+                  : setNewItem({...newItem, image: e.target.value})
+              }
               required
             />
             <button type="submit" className="w-full bg-black text-white py-2 rounded">
-              {editingIndex !== null ? 'Update Item' : 'Add Item'}
+              {editingId ? 'Update Item' : 'Add Item'}
             </button>
+            {editingId && (
+              <button 
+                type="button"
+                onClick={() => {
+                  setEditingId(null);
+                  setEditForm({ title: '', image: '' });
+                  setNewItem({ id: '', title: '', image: '' });
+                }}
+                className="w-full bg-gray-500 text-white py-2 rounded mt-2"
+              >
+                Cancel Edit
+              </button>
+            )}
           </form>
         </section>
-
+  
         <section className="max-w-6xl mx-auto">
           <h2 className="text-2xl font-bold mb-6 text-center">Items Donated</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {filteredItems.map((item, index) => (
-              <div key={item.id || index} className="bg-white text-black p-4 rounded-xl shadow-md text-center">
-                <Image src={item.image || '/placeholder.png'} alt={item.title} width={200} height={200} className="mx-auto mb-4 rounded" />
+            {filteredItems.map((item) => (
+              <div key={item.id} className="bg-white text-black p-4 rounded-xl shadow-md text-center">
+                <Image 
+                  src={item.image || '/placeholder.png'} 
+                  alt={item.title} 
+                  width={200} 
+                  height={200} 
+                  className="mx-auto mb-4 rounded" 
+                />
                 <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
                 <div className="flex justify-center gap-2">
-                  <button onClick={() => handleEdit(index)} className="bg-yellow-500 text-white px-3 py-1 rounded text-sm">
+                  <button 
+                    onClick={() => handleEditClick(item.id)} 
+                    className="bg-yellow-500 text-white px-3 py-1 rounded text-sm"
+                  >
                     Edit
                   </button>
-                  <button onClick={() => handleDelete(index)} className="bg-red-500 text-white px-3 py-1 rounded text-sm">
+                  <button 
+                    onClick={() => handleDelete(items.findIndex(i => i.id === item.id))} 
+                    className="bg-red-500 text-white px-3 py-1 rounded text-sm"
+                  >
                     Delete
                   </button>
                 </div>
