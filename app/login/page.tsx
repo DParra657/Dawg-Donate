@@ -8,6 +8,7 @@ export default function LoginPage() {
   // State variables to store user input
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');  // Added state for name
   const router = useRouter(); // Used to redirect user after login
 
   // Handles form submission for login
@@ -18,7 +19,7 @@ export default function LoginPage() {
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }), // Send email and password as JSON
+      body: JSON.stringify({ email, password, name }), // Send email, password, and name to API
     });
 
     const data = await res.json(); // Parse response JSON
@@ -27,20 +28,21 @@ export default function LoginPage() {
     if (res.ok) {
       localStorage.setItem('authToken', data.data.token);  // make sure your API returns this
       localStorage.setItem('userId', data.data.userId);
-      localStorage.setItem('name', data.data.name);
+      localStorage.setItem('name', name); // Save name to localStorage
+      localStorage.setItem('email', data.data.email);
 
       router.push(`/dashboard/${data.data.userId}`);
     } else {
-      alert(data.error || 'Login failed'); // Show error if login fails
+      alert(data.error || 'Login failed');
     }
 
     // Clear input fields after submission
     setEmail('');
     setPassword('');
+    setName(''); // Reset the name field
   };
 
   return (
-    // Centered container for the login page
     <main
       className="flex flex-col items-center justify-center min-h-screen p-6"
       style={{ backgroundColor: '#DB6B71', color: 'black' }}
@@ -71,6 +73,16 @@ export default function LoginPage() {
           required
         />
 
+        {/* Name input field */}
+        <input
+          type="text"
+          placeholder="Name"
+          className="w-full mb-4 p-3 border border-gray-300 rounded text-black placeholder:text-gray-500"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+
         {/* Submit button */}
         <button
           type="submit"
@@ -90,4 +102,3 @@ export default function LoginPage() {
     </main>
   );
 }
-

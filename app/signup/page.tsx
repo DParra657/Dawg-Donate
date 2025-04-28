@@ -13,34 +13,35 @@ export default function SignupPage() {
 
   // Function to handle form submission
   const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevents default form behavior (refresh)
-
-    // Send POST request to the API with email and password
+    e.preventDefault();
+  
     const res = await fetch('/api/users', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password, name }), 
+      body: JSON.stringify({ email, password, name }),
     });
-
-    const data = await res.json(); // Parse the response JSON
-
+  
+    const data = await res.json();
+  
     if (res.ok) {
-      // Save data to localStorage after successful signup
-      localStorage.setItem('username', email);
-      localStorage.setItem('name', name);  
-      // Redirect to dashboard after signup
-      router.push(`/dashboard/${data.userId}`); 
+      localStorage.setItem('authToken', data.data.token);
+localStorage.setItem('userId', data.data.userId);
+localStorage.setItem('name', data.data.name);
+localStorage.setItem('email', data.data.email);
+  
+      router.push(`/dashboard/${data.userId}`);
     } else {
-      alert(data.error || 'Signup failed'); // Show error alert if signup fails
+      alert(data.error || 'Signup failed');
     }
-
-    // Clear input fields
+  
     setEmail('');
     setPassword('');
-    setName(''); 
+    setName('');
   };
+  
+  
 
   return (
     <main

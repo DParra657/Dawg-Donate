@@ -1,23 +1,15 @@
 import { NextResponse } from 'next/server';
 import connectMongoDB from '@/config/mongodb';
-import mongoose from 'mongoose';
+import { User } from '@/models/User'; // ✅ Import User from models/User
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// Define a Mongoose schema and model for users
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-});
-
-const User = mongoose.models.User || mongoose.model('User', userSchema);
-
 export async function POST(req: Request) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, name } = await req.json();  // Accept name
 
-    if (!email || !password) {
-      return NextResponse.json({ success: false, error: 'Missing email or password' }, { status: 400 });
+    if (!email || !password || !name) {
+      return NextResponse.json({ success: false, error: 'Missing email, password, or name' }, { status: 400 });
     }
 
     // Connect to MongoDB using Mongoose
@@ -43,7 +35,12 @@ export async function POST(req: Request) {
     const response = NextResponse.json({
       success: true,
       message: 'Login successful',
-      data: { userId: user._id, name: user.name },
+      data: { 
+        token, 
+        userId: user._id,
+        name: user.name,  // Make sure to return the name as well
+        email: user.email  // Return email if needed
+      },
     });
     response.cookies.set('authToken', token, {
       httpOnly: true,

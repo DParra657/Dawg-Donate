@@ -16,20 +16,20 @@
       "static/chunks/main-app.js",
       "static/chunks/app/splash/page.js"
     ],
+    "/api/public-items/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/public-items/route.js"
+    ],
     "/login/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/login/page.js"
     ],
-    "/signup/page": [
+    "/api/login/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/signup/page.js"
-    ],
-    "/api/users/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/users/route.js"
+      "static/chunks/app/api/login/route.js"
     ],
     "/dashboard/[userId]/page": [
       "static/chunks/webpack.js",
@@ -41,10 +41,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/items/route.js"
     ],
-    "/api/login/route": [
+    "/account/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/login/route.js"
+      "static/chunks/app/account/page.js"
     ]
   }
 }
