@@ -4,16 +4,32 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Header from '../../components/Header';
+import { useRouter } from 'next/navigation';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
+type PublicItem = {
+  id: string;
+  title: string;
+  image: string;
+  owner: string; // 👈 This is needed for splash/public donations
+  isPublic?: boolean; // Optional isPublic property added
+};
+
 
 type Item = {
   id: string;
   title: string;
   image: string;
-  isPublic: boolean; // Added isPublic property
+  isPublic: boolean;
+   // Added isPublic property
 };
 
+
+
 export default function DashboardPage() {
+  const router = useRouter();
+  const [cart, setCart] = useState<Item[]>([]);
+  const [publicItems, setPublicItems] = useState<PublicItem[]>([]);
   const [name, setName] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [items, setItems] = useState<Item[]>([]);
@@ -96,7 +112,20 @@ export default function DashboardPage() {
         console.error('Authentication failed');
       }
     });
-  }, []);
+    
+      const fetchPublicItems = async () => {
+        const res = await fetch('/api/public-items');
+        const data = await res.json();
+        if (res.ok) {
+          setPublicItems(data);
+        } else {
+          console.error('Failed to fetch public items');
+        }
+      };
+    
+      fetchPublicItems();
+    }, []);
+    
 
   // Handle the search input and filter items
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -229,16 +258,30 @@ export default function DashboardPage() {
     }
   };
 
+  const handleAddToCart = (item: PublicItem) => {
+    // Save selected item somewhere, like localStorage (quick way)
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const updatedCart = [...existingCart, item];
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  
+    // Navigate to the Cart page
+    router.push('/cart');
+  };
+  
+  
+
   return (
     <>
       <Header isLoggedIn={true} />
       <main className="min-h-screen bg-[#DB6B71] px-6 py-12 text-white font-sans">
+        
+        {/* Welcome Section */}
         <section className="text-center mb-12">
           <h1 className="text-3xl font-bold">Welcome to your donations, {name}!</h1>
         </section>
   
+        {/* Form Section */}
         <section className="bg-white text-black p-6 rounded-xl shadow-md max-w-xl mx-auto mb-16">
-          {/* Search bar */}
           <input
             type="text"
             placeholder="Search Items"
@@ -247,7 +290,6 @@ export default function DashboardPage() {
             onChange={handleSearch}
           />
   
-          {/* Form */}
           <form onSubmit={editingId ? handleEditSubmit : handleSubmit}>
             <input
               type="text"
@@ -275,7 +317,6 @@ export default function DashboardPage() {
               required
             />
   
-            {/* 🔥 New Make Public Checkbox */}
             <div className="flex items-center mb-4">
               <input
                 type="checkbox"
@@ -311,8 +352,9 @@ export default function DashboardPage() {
           </form>
         </section>
   
+        {/* Your Items Section */}
         <section className="max-w-6xl mx-auto">
-          <h2 className="text-2xl font-bold mb-6 text-center">Items Donated</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">Items You Donated</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {filteredItems.map((item) => (
               <div key={item.id} className="bg-white text-black p-4 rounded-xl shadow-md text-center">
@@ -342,6 +384,41 @@ export default function DashboardPage() {
             ))}
           </div>
         </section>
+  
+        {/* Available Public Donations Section */}
+        <section className="max-w-6xl mx-auto mt-20">
+  <h2 className="text-2xl font-bold mb-6 text-center">Available Public Donations</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    {publicItems.length === 0 ? (
+      <p className="text-center w-full">No public donations yet.</p>
+    ) : (
+      publicItems.map((item: PublicItem) => (
+        <div key={item.id} className="bg-white text-black p-4 rounded-xl shadow-md text-center">
+          <Image 
+            src={item.image || '/placeholder.png'}
+            alt={item.title}
+            width={200}
+            height={200}
+            className="mx-auto mb-4 rounded"
+          />
+          <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+          <p className="text-sm text-gray-600">
+            Donated by {item.owner}
+          </p>
+
+          <button
+            onClick={() => handleAddToCart({ ...item, isPublic: true })}
+            className="mt-2 bg-[#DB6B71] text-white px-4 py-2 rounded-full hover:opacity-90 transition"
+          >
+            Add to Cart
+          </button>
+        </div>
+      ))
+    )}
+  </div>
+</section>
+
+  
       </main>
     </>
   );

@@ -134,6 +134,13 @@ export default function Splash() {
                   />
                   <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
                   <p className="text-sm text-gray-600">Donated by {item.owner}</p>
+
+                  {/* 💥 New Add to Cart Button */}
+    <Link href="/login">
+      <button className="mt-4 bg-[#DB6B71] text-white px-4 py-2 rounded-full hover:opacity-90 transition">
+        Add to Cart
+      </button>
+    </Link>
                 </div>
               ))
             )}
